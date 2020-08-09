@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.7'
 services:
     web:
         image: webdevops/php-apache-dev:7.1
@@ -44,7 +44,7 @@ services:
           - PMA_USER=root
           - PMA_PASSWORD=root
         ports:
-          - 32815:3306
+          - 32815:80
         links:
           - db
         depends_on:
