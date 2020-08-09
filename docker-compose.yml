@@ -1,0 +1,54 @@
+version: '3.6'
+services:
+    web:
+        image: webdevops/php-apache-dev:7.1
+        container_name: web
+        restart: always
+        user: application
+        environment:
+          - WEB_ALIAS_DOMAIN=mage2.practice.test
+          - WEB_DOCUMENT_ROOT=/app/pub
+          - PHP_DATE_TIMEZONE=EST
+          - PHP_DISPLAY_ERRORS=1
+          - PHP_MEMORY_LIMIT=2048M
+          - PHP_MAX_EXECUTION_TIME=300
+          - PHP_POST_MAX_SIZE=500M
+          - PHP_UPLOAD_MAX_FILESIZE=1024M
+        volumes:
+          - ./magento:/app:cached
+        ports:
+          - "32811:80"
+          - "32812:443"
+          - "32823:22"
+        links:
+          - db
+    db:
+      image: meanbee/magento-mysql
+      container_name: db
+      ports:
+        - 32816:3306
+      environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_USER=magento
+        - MYSQL_PASSWORD=magento
+        - MYSQL_DATABASE=magento
+      volumes:
+        - ./mysql:/var/lib/mysql:rw,delegated
+
+    phpmyadmin:
+        container_name: phpmyadmin
+        restart: always
+        image: phpmyadmin/phpmyadmin:latest
+        environment:
+          - MYSQL_ROOT_PASSWORD=root
+          - PMA_USER=root
+          - PMA_PASSWORD=root
+        ports:
+          - 32815:3306
+        links:
+          - db
+        depends_on:
+          - db
+volumes:
+    db-data:
+        external: false
